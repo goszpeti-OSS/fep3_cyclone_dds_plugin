@@ -1,0 +1,22 @@
+module fep3 {
+  module ddstypes {
+
+      struct Property
+      {
+        string<256>    name;
+        string<64>     type;
+        string         value;
+      };
+
+      struct StreamType
+      {
+        string             metatype;
+        sequence<Property> properties;
+      };
+
+      struct BusData
+      {
+        sequence<octet> data;
+      };
+  };
+};

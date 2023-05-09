@@ -1,0 +1,15 @@
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 17e369e..0aaaeee 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -86,6 +86,7 @@ IF (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+     add_compile_options("$<$<CONFIG:DEBUG>:-Og>")
+     message("Disable optimization")
+ ENDIF(CMAKE_COMPILER_IS_GNUCC)
++add_compile_definitions(DEV_ESSENTIAL_DISABLE_MAKE_RESULT_CHECK_RESERVED_ZERO)
+ 
+ include(scripts/cmake/enable_multicore_compilation.cmake)
+ include(scripts/cmake/use_integrated_debug_symbols.cmake)
