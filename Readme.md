@@ -14,6 +14,7 @@ What is working?
 
 Dynamic stream metatype change is currently not working.
 Possible issues with timing where not analized yet. 
+Shared memory is currently not supported on Windows from Cyclone DDS.
 
 # Qos
 
@@ -56,13 +57,13 @@ The project is set up with Conan using the available public packages and buildin
 Only first level dependencies are listed.
 
 * cyclonedds and cyclonedds-cxx by Eclipse under EPL 2.0
-* dev_essential 1.20, fep_sdk 3.1.0 by CARIAD under MPL-2.0
+* dev_essential 1.20 and fep_sdk 3.1.0 by CARIAD under MPL-2.0
 * boost 1.73 under BSL-1.0
 * gtest/1.10.0 under BSD-3-Clause
 
-## Tested compilers
+## Used compilers
 
 * Visual Studio MSVC 142
-* gcc TODO
+* gcc 9
 
 

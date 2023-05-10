@@ -46,21 +46,15 @@ public:
     {
 
     }
-  
-    virtual void on_data_available(
-        dds::sub::AnyDataReader& reader)
-    {
-        std::cout << "on_data_available" << std::endl;
-    }
 
     virtual void on_data_on_readers(
         dds::sub::Subscriber& subs)
+        // TODO this reads too often
     {
         auto user_data = subs.participant()->qos().policy<dds::core::policy::UserData>().value();
         std::string name(user_data.begin(), user_data.end());
 
         _businfo->onUserDataReceived(name);
-        std::cout << "on_data_on_readers" << std::endl;
     }
 
     BusInfo* _businfo;

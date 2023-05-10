@@ -1,0 +1,11 @@
+[settings]
+os=Linux
+arch=x86_64
+compiler=gcc
+compiler.version=9
+compiler.libcxx=libstdc++11
+build_type=Release
+[options]
+
+[env]
+CONAN_DISABLE_STRICT_MODE=1 
