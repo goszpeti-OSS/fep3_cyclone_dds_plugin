@@ -16,21 +16,19 @@ jobs:
     timeout-minutes: 14
 
     strategy:
-      fail-fast: false
       matrix:
         name:
           [
-            "ubuntu-20",
+            # "ubuntu-20",
             "windows",
           ]
         include:
-            pytest_args: ""
           # - name: "ubuntu-py310"
           #   os: ubuntu-20.04
           #   profile: gcc-X
-          - name: "windows-py311"
+          - name: "windows"
             os: windows-latest
-            profile: ${{ matrix.profile}}
+            profile: win_142
         
     env:
       LC_ALL: "en_US.UTF-8"
