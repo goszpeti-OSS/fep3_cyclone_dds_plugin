@@ -15,11 +15,11 @@ using namespace fep3;
 StreamItemDataWriter::StreamItemDataWriter(const std::shared_ptr<StreamItemTopic> & topic
     , size_t) /*queue_capacity*/
     : _topic(topic)
-    , _publisher(topic->getDomainParticipant()) // , qos_provider->publisher_qos(FEP3_QOS_PARTICIPANT)
+    , _publisher(topic->getDomainParticipant())
     , _stream_type_writer(DataWriter<fep3::ddstypes::StreamType>(_publisher
         , topic->getStreamTypeTopic(), _publisher.default_datawriter_qos()))
 {
-    _stream_type_writer->set_batch(true);
+    _stream_type_writer->set_batch(true); // for flush to have an effect
     createWriter(_publisher.default_datawriter_qos());
 }
 
@@ -83,7 +83,6 @@ fep3::Result StreamItemDataWriter::write(const IDataSample& data_sample)
 {
     try
     {
-        wait_for_reader();
         fep3::ddstypes::BusData sample;
         BytesTopicTypeRawMemory raw_memory(sample);
         data_sample.read(raw_memory);
@@ -118,7 +117,7 @@ fep3::Result StreamItemDataWriter::write(const IStreamType& stream_type)
 
         if (_topic->updateStreamType(stream_type))
         {
-            const auto qos = _publisher.default_datawriter_qos();// _topic->getQosProvider()->datawriter_qos(_topic->getQosProfile().c_str());
+            const auto qos = _publisher.default_datawriter_qos();
             createWriter(qos);
         }
 

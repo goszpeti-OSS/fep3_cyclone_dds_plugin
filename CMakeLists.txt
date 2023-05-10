@@ -64,15 +64,17 @@ endif(UNIX)
 install(FILES README.md
         DESTINATION .
 )
-install(FILES LICENSE.md
+install(FILES LICENSE
         DESTINATION doc/license
 )
 
+find_package(CycloneDDS-CXX REQUIRED )
+find_package(dev_essential REQUIRED COMPONENTS pkg_rpc system filesystem)
+find_package(fep3_participant REQUIRED)
+
 add_subdirectory(src)
 
-
-if(fep3_participant_cmake_enable_tests)
-    # we have private tests that are built/run during the product build
+if(ENABLE_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()

@@ -10,7 +10,13 @@
 
 using namespace fep3::arya;
 
-class CycloneDDSSimulationBus : public fep3::base::Component<fep3::arya::ISimulationBus>
+#ifdef BUILD_SIMBUS
+#define EXPORTED __declspec(dllexport)
+#else
+#define EXPORTED __declspec(dllimport)
+#endif
+
+class EXPORTED CycloneDDSSimulationBus : public fep3::base::Component<fep3::arya::ISimulationBus>
 {
     public:
         CycloneDDSSimulationBus();

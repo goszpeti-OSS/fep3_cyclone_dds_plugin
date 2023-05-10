@@ -1,17 +1,44 @@
 
-################################################################################
-## \page page_cmake_commands
-# <hr>
-# <b>cyclone_install(\<destination\>)</b>
-#
-# This macro installs the cyclone libraries and the 'USER_QOS_PROFILES.xml' to the
-#   folder \<destination\>. The macro expects the 'USER_QOS_PROFILES.xml' to lay
-#   next the the 'CMakeLists.txt' calling this macro.
-#
-# Arguments:
-# \li \<destination\>:
-# The relative path to the install subdirectory
-################################################################################
+macro(fep_cyclone_dds_plugin_install NAME DESTINATION)
+    fep3_participant_install(${NAME} ${DESTINATION})
+    cyclone_install(${DESTINATION})
+    install(
+        FILES
+            $<TARGET_FILE:fep3_cyclone_dds_plugin>
+        DESTINATION ${DESTINATION}
+    )
+     # overwrite fep_components file
+    install(
+        FILES
+            $<TARGET_FILE_DIR:fep3_cyclone_dds_plugin>/fep3_participant.fep_components
+        DESTINATION ${DESTINATION}
+    )
+endmacro(fep_cyclone_dds_install DESTINATION)
+
+macro(fep_cyclone_dds_plugin_deploy NAME)
+    fep3_participant_deploy(${NAME})
+    add_custom_command(TARGET ${NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                $<TARGET_FILE_DIR:${NAME}>/cyclone
+    )
+    cyclone_deploy(${NAME} "$<TARGET_FILE_DIR:${NAME}>/cyclone")
+
+    # no need to copy in build directory on linux since linker rpath takes care of that
+    if (WIN32)
+        add_custom_command(TARGET ${NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:fep3_cyclone_dds_plugin>
+            $<TARGET_FILE_DIR:${NAME}>/cyclone)
+    endif()
+
+    # always need a fep_components file for the native components plugin
+    add_custom_command(TARGET ${NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE_DIR:fep3_cyclone_dds_plugin>/fep3_participant.fep_components
+            $<TARGET_FILE_DIR:${NAME}>
+    )
+
+endmacro(fep_cyclone_dds_plugin_deploy NAME)
+
 macro(cyclone_install DESTINATION)
     if(MSVC)
         set(CYCLONEDDS-CXX_FILES_PATH ${CONAN_BIN_DIRS_CYCLONEDDS-CXX})
@@ -32,21 +59,7 @@ macro(cyclone_install DESTINATION)
 
 endmacro(cyclone_install DESTINATION)
 
-
-################################################################################
-## \page page_cmake_commands
-# <hr>
-# <b>cyclone_deploy(\<name\>)</b>
-#
-# This macro copies the cyclone libraries to the location next to the target
-#   \<name\>. Furthermore it copies the 'USER_QOS_PROFILES.xml' which is
-#   expected to lay next to the 'CMakeLists.txt' which called that macro.
-#
-# Arguments:
-# \li \<name\>:
-# The name of the target that needs the cyclone libraries.
-################################################################################
-macro(cyclone_deploy NAME)
+macro(cyclone_deploy NAME TARGET_FOLDER)
     if(MSVC)
         set(CYCLONEDDS-CXX_FILES_PATH ${CONAN_BIN_DIRS_CYCLONEDDS-CXX})
         set(CYCLONEDDS_FILES_PATH ${CONAN_BIN_DIRS_CYCLONEDDS})
@@ -70,21 +83,21 @@ macro(cyclone_deploy NAME)
                 ${CYCLONEDDS-CXX_FILES_PATH}/vcruntime140.dll
                 ${CYCLONEDDS-CXX_FILES_PATH}/vcruntime140_1.dll
                 ${CYCLONEDDS_FILES_PATH}/ddsc$<$<CONFIG:Debug>:d>.dll
-                $<TARGET_FILE_DIR:${NAME}>)
+                ${TARGET_FOLDER})
     else()
     add_custom_command(TARGET ${NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CYCLONEDDS-CXX_FILES_PATH}/${FILE_WILDCARD}
-            $<TARGET_FILE_DIR:${NAME}>)
+            ${TARGET_FOLDER})
     add_custom_command(TARGET ${NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CYCLONEDDS_FILES_PATH}/${FILE_WILDCARD}
-            $<TARGET_FILE_DIR:${NAME}>)
+            ${TARGET_FOLDER})
     endif()
 
     add_custom_command(TARGET ${NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml
-                $<TARGET_FILE_DIR:${NAME}>)
+                ${TARGET_FOLDER})
 endmacro(cyclone_deploy NAME)
 

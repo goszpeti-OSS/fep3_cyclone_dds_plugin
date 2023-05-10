@@ -8,19 +8,6 @@
 
 class BusInfo;
 
-class ParticipantBuiltinTopicDataListener
-    : public virtual dds::sub::NoOpDataReaderListener<dds::topic::ParticipantBuiltinTopicData>
-{
-public:
-    ParticipantBuiltinTopicDataListener(BusInfo* businfo);
-
-public: // NoOpDataReaderListener
-    void on_data_available(dds::sub::DataReader<dds::topic::ParticipantBuiltinTopicData>& reader) override;
-    
-private:
-    BusInfo* _businfo;
-};
-
 /*
 * Collect and provide bus information via build_in topic from conext dds
 */
@@ -74,11 +61,8 @@ public:
 
     void onUserDataReceived(const std::string& user_data);
 
-    ParticipantBuiltinTopicDataListener getListener();
-
 private:
     std::map<std::string, std::shared_ptr< ParticipantInfo>> _participant_infos;
     std::shared_ptr<ParticipantInfo> _own_participant_info;
     std::function<void()> _callback;
-    ParticipantBuiltinTopicDataListener _listener;
 };

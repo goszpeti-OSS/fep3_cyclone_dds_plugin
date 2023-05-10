@@ -3,9 +3,6 @@ set(CMAKE_BUILD_TYPE ${CONAN_SETTINGS_BUILD_TYPE})  #
 
 # Execute (now hacked) find package script
 
-find_package(CycloneDDS-CXX REQUIRED )
-find_package(dev_essential REQUIRED COMPONENTS pkg_rpc system filesystem)
-find_package(fep3_participant REQUIRED)
 include(cyclone-macros.cmake)
 
 set(PLUGIN_NAME fep3_cyclone_dds_plugin)
@@ -41,6 +38,7 @@ add_library(${PLUGIN_NAME} SHARED
             )
 
 set_target_properties(${PLUGIN_NAME} PROPERTIES FOLDER "plugins/cpp")
+target_compile_definitions(${PLUGIN_NAME} PRIVATE BUILD_SIMBUS)
 
 target_link_libraries(${PLUGIN_NAME} PRIVATE
             CycloneDDS-CXX::ddscxx
@@ -58,7 +56,13 @@ if(MSVC)
     install(FILES $<TARGET_PDB_FILE:${PLUGIN_NAME}> DESTINATION lib/cyclone OPTIONAL)
 endif()
 
-cyclone_deploy(${PLUGIN_NAME})
+add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/fep3_participant.fep_components
+        $<TARGET_FILE_DIR:${PLUGIN_NAME}>
+)
+
+cyclone_deploy(${PLUGIN_NAME} $<TARGET_FILE_DIR:${PLUGIN_NAME}>)
 cyclone_install(lib/cyclone)
 
 install(TARGETS ${PLUGIN_NAME}
@@ -67,3 +71,7 @@ install(TARGETS ${PLUGIN_NAME}
         RUNTIME DESTINATION lib/cyclone)
 
 install(EXPORT ${PLUGIN_NAME}_targets DESTINATION lib/cmake)
+
+install(FILES fep3_participant.fep_components
+        DESTINATION .
+)

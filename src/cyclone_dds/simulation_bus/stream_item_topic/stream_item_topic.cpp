@@ -22,7 +22,8 @@ StreamItemTopic::StreamItemTopic(DomainParticipant & participant
      , _stream_type_topic(dds::topic::Topic<fep3::ddstypes::StreamType> (participant, topic_name + "_stream_type"))
      , _sample_topic(dds::topic::Topic<fep3::ddstypes::BusData> (participant, topic_name, 
          dds::topic::qos::TopicQos()
-         << dds::core::policy::Reliability::Reliable(dds::core::Duration::from_millisecs(1000))
+         << dds::core::policy::Reliability::BestEffort(dds::core::Duration::from_millisecs(20))
+         //<< dds::core::policy::Reliability::Reliable(dds::core::Duration::from_millisecs(1000))
          << dds::core::policy::History::KeepLast(1)
          << dds::core::policy::ResourceLimits(100)
          ))

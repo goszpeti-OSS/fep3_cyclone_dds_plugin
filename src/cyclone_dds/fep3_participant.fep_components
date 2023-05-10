@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components xmlns="http://fep.vwgroup.com/fep_sdk/3.0/components">
+    <schema_version>1.0.0</schema_version>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>logging_service.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>configuration_service.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>service_bus.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>participant_info.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>clock_service.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>clock_sync_service.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>data_registry.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>job_registry.arya.fep3.iid</iid>
+    </component>
+    <component>
+        <source type="cpp-plugin">
+            ./fep_components_plugin
+        </source>
+        <iid>scheduler_service.arya.fep3.iid</iid>
+    </component>
+    <!--Health Service is an optional cpp-plugin component and may be enabled by uncommenting the following section-->
+    <!--component>
+        <source type="cpp-plugin"/>
+        <iid>health_service.experimental.fep3.iid</iid>
+    </component-->
+    <component>
+        <source type="cpp-plugin">
+		cyclone_dds/fep3_cyclone_dds_plugin
+        </source>
+        <iid>simulation_bus.arya.fep3.iid</iid>
+    </component>
+</components>
+

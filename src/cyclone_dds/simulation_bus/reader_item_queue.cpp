@@ -49,12 +49,10 @@ ReaderItemQueue::ReaderItemQueue
 
 ReaderItemQueue::~ReaderItemQueue()
 {
-    _sample_reader = dds::core::null;
-    _streamtype_reader = dds::core::null;
-    _subscriber = dds::core::null;
     _sample_reader->close();
     _streamtype_reader->close();
     _subscriber.close();
+
 }
 
 void ReaderItemQueue::createReader(const dds::sub::qos::DataReaderQos & qos)
@@ -94,8 +92,9 @@ size_t ReaderItemQueue::size() const
 {
     try
     {
-        // TODO: i have no idea yet, if and how cyclone dds srores the cached sample count
-        return 1; //_sample_reader->qos()->datareader_cache_status().sample_count();
+        auto sample_reader = _sample_reader;
+        auto samples = sample_reader.select().state(dds::sub::status::DataState::new_data()).read();
+        return samples.length(); //_sample_reader->qos()->datareader_cache_status().sample_count();
     }
     catch (dds::core::Exception & exception)
     {
@@ -164,41 +163,30 @@ bool ReaderItemQueue::popFrom
 
         // TODO For now we are reading both streamtype and sample if a sample read is triggered
 
-        //auto readers = subscriber.delegate()->get_datareaders(dds::sub::status::DataState::new_data());
-        //for (auto & reader : readers)
-        //{
-            //if (reader->topic_description().name() == sample_reader.topic_description().name())
-            {
-                for (auto sample : sample_reader.select()
-                    .max_samples(1)
-                    .take())
-                {
-                    receiver(createSample(sample, sample.info()));
-                }
+        auto samples = sample_reader.select().state(dds::sub::status::DataState::new_data()).take();
+        bool read_something = false;
+        for (auto sample : samples){
+                read_something = true;
+                receiver(createSample(sample, sample.info()));
             }
-            //else
+        for (auto streamtype : streamtype_reader.select()
+            .max_samples(1)
+            .take()){
+            read_something = true;
+            auto stream_type = createStreamType(streamtype, streamtype.info());
+            receiver(stream_type);
+            if (_topic->updateStreamType(*stream_type))
             {
-                for (auto streamtype : streamtype_reader.select()
-                    .max_samples(1)
-                    .take())
-                {
-                    auto stream_type = createStreamType(streamtype, streamtype.info());
-                    receiver(stream_type);
-                    if (_topic->updateStreamType(*stream_type))
-                    {
-                        // first read all samples
-                        while (pop(receiver));
+                // first read all samples
+                while (pop(receiver));
 
-                        // now recreate reader
-                        const auto qos = _subscriber.default_datareader_qos();
-                            //_topic->getQosProvider()->datareader_qos(_topic->getQosProfile().c_str());
-                        createReader(qos);
-                    }
-                }
+                // now recreate reader
+                const auto qos = _subscriber.default_datareader_qos();
+                createReader(qos);
             }
+        }
             //subscriber.delegate()->end_coherent_access();
-            return false;
-        //}
+         return read_something;
     }
     //subscriber.delegate()->end_coherent_access();
     return false;
@@ -215,29 +203,18 @@ fep3::Optional<fep3::Timestamp> ReaderItemQueue::getFrontTime() const
     auto streamtype_reader = _streamtype_reader;
     auto sample_reader = _sample_reader;
 
-    int num_readers =  dds::sub::find<dds::sub::AnyDataReader>(_subscriber
-            , dds::sub::status::DataState::new_data()
-            , std::back_inserter(readers));
+    auto sample = sample_reader->wrapper().select()
+        .max_samples(1)
+        .read().begin();
 
-     if (num_readers > 0)
-    {
-       if (readers[0] == sample_reader)
-        {
-           auto sample = sample_reader->wrapper().select()
-                .max_samples(1)
-                .read().begin();
+    return convertTimestamp(sample->info().timestamp());
+     
+    auto streamtype = streamtype_reader->wrapper().select()
+        .max_samples(1)
+        .read().begin();
 
-            return convertTimestamp(sample->info().timestamp());
-       }
-          else
-        {
-            auto streamtype = streamtype_reader->wrapper().select()
-                .max_samples(1)
-                .read().begin();
-
-            return convertTimestamp(streamtype->info().timestamp());
-        }
-    }
+    return convertTimestamp(streamtype->info().timestamp());
+    
     //_subscriber.delegate()->end_coherent_access();
 
     return {};

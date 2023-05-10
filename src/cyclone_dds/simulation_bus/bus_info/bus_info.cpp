@@ -14,40 +14,6 @@ using namespace dds::sub::status;
 
 #include "bus_info.h"
 
-ParticipantBuiltinTopicDataListener::ParticipantBuiltinTopicDataListener(BusInfo* businfo)
-        : _businfo(businfo)
-    {
-
-    }
-
- // NoOpDataReaderListener
-void ParticipantBuiltinTopicDataListener::on_data_available(dds::sub::DataReader<dds::topic::TParticipantBuiltinTopicData<org::eclipse::cyclonedds::topic::ParticipantBuiltinTopicDataDelegate>>& reader)
-{
-    auto current_reader = reader;
-    auto samples =
-        current_reader.select() // reader
-        .state(DataState::new_instance())
-        .take();
-
-    for (const auto & sample : samples)
-    {
-        if (!sample.info().valid())
-        {
-            continue;
-        }
-        // read participant name
-
-        std::string name = "Participant";
-        // TODO this won't compile with data() - ParticipantBuiltinTopicData does not seam to have a reead method?!
-        auto user_data = sample;//data().user_data().value();
-
-        /* std::string name(user_data.begin(), user_data.end());*/
-
-        _businfo->onUserDataReceived(name);
-    }
-}
-
-
 BusInfo::ParticipantInfo::ParticipantInfo(const std::string & participant_name) :
     _participant_name(participant_name)
 {
@@ -117,15 +83,13 @@ BusInfo::Version BusInfo::ParticipantInfo::getFepVersion() const
 }
 
 
-BusInfo::BusInfo():
-    _listener(this)
+BusInfo::BusInfo()
 {
     _own_participant_info = std::make_unique<BusInfo::ParticipantInfo>();
 }
 
 BusInfo::~BusInfo()
 {
-    //_listener_binder.reset();
 }
 
 void BusInfo::registerUserData(dds::domain::qos::DomainParticipantQos & qos)
@@ -178,11 +142,6 @@ BusInfo::ParticipantInfo* BusInfo::getOwnParticipantInfo() const
 void BusInfo::setUpdateCallback(const std::function<void()>& callback)
 {
     _callback = callback;
-}
-
-ParticipantBuiltinTopicDataListener BusInfo::getListener()
-{
-    return _listener;
 }
 
 std::string BusInfo::asJson() const

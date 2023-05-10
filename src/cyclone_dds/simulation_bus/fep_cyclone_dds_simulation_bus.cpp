@@ -38,6 +38,35 @@ using namespace dds::core;
 using namespace dds::domain::qos;
 
 
+class ParticipantListener :
+    public virtual dds::domain::NoOpDomainParticipantListener
+{
+public:
+    ParticipantListener(BusInfo * businfo) : _businfo(businfo)
+    {
+
+    }
+  
+    virtual void on_data_available(
+        dds::sub::AnyDataReader& reader)
+    {
+        std::cout << "on_data_available" << std::endl;
+    }
+
+    virtual void on_data_on_readers(
+        dds::sub::Subscriber& subs)
+    {
+        auto user_data = subs.participant()->qos().policy<dds::core::policy::UserData>().value();
+        std::string name(user_data.begin(), user_data.end());
+
+        _businfo->onUserDataReceived(name);
+        std::cout << "on_data_on_readers" << std::endl;
+    }
+
+    BusInfo* _businfo;
+};
+
+
 a_util::filesystem::Path getFilePath()
 {
     a_util::filesystem::Path current_binary_file_path;
@@ -88,7 +117,9 @@ public:
         _topics.clear();
         _bus_info.reset();
   
+        if (_participant != dds::core::null){
         _participant->close();
+        }
         _guard_condition = dds::core::null;
     }
     
@@ -376,13 +407,6 @@ fep3::Result CycloneDDSSimulationBus::initialize()
     {
         RETURN_ERROR_DESCRIPTION(fep3::ERR_NOT_SUPPORTED, "RTI DDS doesn't support system name longer than 255 byte");
     }
-    // TODO
-    dds_propertyseq ps;
-    dds_property p{1, "dds.domain_participant.domain_tag",const_cast<char*>(system_name.c_str()) };
-    ps.n = 1;
-    ps.props = &p;
-    participant_qos.delegate().ddsc_qos()->property.value = ps;
-
     _impl->initBusInfo(participant_qos, participant_name);
 
     {
@@ -401,10 +425,15 @@ fep3::Result CycloneDDSSimulationBus::initialize()
 #endif
         try
         {
+            ddsi_config conf{};
+            conf.domainTag = strdup(system_name.c_str());
             _impl->_participant = dds::domain::DomainParticipant
-                (domain_id
-                 , participant_qos);
+            (domain_id, participant_qos
+            , new ParticipantListener(_impl->_bus_info.get()), dds::core::status::StatusMask::all(),
+            // , nullptr, dds::core::status::StatusMask::none(),
+                conf);
             _impl->_bus_info->registerParticipant(_impl->_participant);
+            //
         }
         catch (const std::exception& ex)
         {
