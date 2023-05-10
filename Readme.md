@@ -1,4 +1,4 @@
-# FEP ECLIPSE CYCLONE DDS PLUGIN
+# FEP3 Eclipse Cyclone DDS Simulation Bus Plugin
 
 This project aim to add an open source simulation bus to the FEP3 SDK for the purpose of showcasing its capabilities. It does not aim to be a fully featured and fast implementation.
 
@@ -21,6 +21,11 @@ Only via the CYCLONEDDS_URI environment varaible. See the USER_QOS_PROFILES.xml.
 This is not set per default, so there is no differentiation between small and large or other kinds of sample types.
 
 ## Using the Adapter
+
+### For simulations
+
+A *fep3_participant.fep_components* file is provided in the lib folder, so you only need to copy it and the *cyclone_dds'* folder beside your 
+fep3_particpant shared library and you're ready to go!
 
 ### Developing participants - CMake macros
 

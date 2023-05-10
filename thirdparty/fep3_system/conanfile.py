@@ -1,7 +1,6 @@
 from pathlib import Path
 from conans import ConanFile, CMake
 from conan.tools.files import patch
-import os
 
 class ConanProduct(ConanFile):
     name = "fep_sdk_system"

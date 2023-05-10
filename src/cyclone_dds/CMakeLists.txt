@@ -63,12 +63,12 @@ add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
 )
 
 cyclone_deploy(${PLUGIN_NAME} $<TARGET_FILE_DIR:${PLUGIN_NAME}>)
-cyclone_install(lib/cyclone)
+cyclone_install(lib/cyclone_dds)
 
 install(TARGETS ${PLUGIN_NAME}
         EXPORT ${PLUGIN_NAME}_targets
-        LIBRARY NAMELINK_SKIP DESTINATION lib/cyclone
-        RUNTIME DESTINATION lib/cyclone)
+        LIBRARY NAMELINK_SKIP DESTINATION lib/cyclone_dds
+        RUNTIME DESTINATION lib/cyclone_dds)
 
 install(EXPORT ${PLUGIN_NAME}_targets DESTINATION lib/cmake)
 

@@ -1,0 +1,17 @@
+ src/CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index fa08094a..e822d2ba 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -55,7 +55,8 @@ if(ENABLE_SHM)
+   else()
+     set(iceoryx_required QUIET)
+   endif()
+-  find_package(iceoryx_binding_c ${iceoryx_required})
++  find_package(iceoryx ${iceoryx_required})
++  set(iceoryx_binding_c iceoryx_binding_c::iceoryx_binding_c)
+   set(ENABLE_SHM ${iceoryx_binding_c_FOUND} CACHE STRING "" FORCE)
+   if(ENABLE_SHM AND APPLE)
+     get_filename_component(iceoryx_libdir "${ICEORYX_LIB}" DIRECTORY)
