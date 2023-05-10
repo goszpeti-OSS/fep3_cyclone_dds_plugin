@@ -3,7 +3,7 @@ set(CMAKE_BUILD_TYPE ${CONAN_SETTINGS_BUILD_TYPE})  #
 
 # Execute (now hacked) find package script
 
-include(cyclone-macros.cmake)
+include(fep3-cyclone-plugin-macros.cmake)
 
 set(PLUGIN_NAME fep3_cyclone_dds_plugin)
 IDLCXX_GENERATE(TARGET ${PLUGIN_NAME}_types FILES "types/stream_types.idl") # WARNINGS no-implicit-extensibility)
@@ -72,6 +72,8 @@ install(TARGETS ${PLUGIN_NAME}
 
 install(EXPORT ${PLUGIN_NAME}_targets DESTINATION lib/cmake)
 
-install(FILES fep3_participant.fep_components
-        DESTINATION .
+install(FILES 
+        fep3_participant.fep_components
+        fep3-cyclone-plugin-macros.cmake
+        DESTINATION lib
 )

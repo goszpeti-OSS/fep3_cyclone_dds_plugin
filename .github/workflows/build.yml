@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  # push:
+  #   branches:
+  #     - master
+  #     - 'release/**'
+  # pull_request:
+  #   branches:
+  #     - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 14
+
+    strategy:
+      fail-fast: false
+      matrix:
+        name:
+          [
+            "ubuntu-20",
+            "windows",
+          ]
+        include:
+            pytest_args: ""
+          # - name: "ubuntu-py310"
+          #   os: ubuntu-20.04
+          #   profile: gcc-X
+          - name: "windows-py311"
+            os: windows-latest
+            profile: ${{ matrix.profile}}
+        
+    env:
+      LC_ALL: "en_US.UTF-8"
+      CONAN_REVISIONS_ENABLED: 1
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install specific Conan version
+        run: | # markupsafe is a workaround fix for broken conan dependencies
+          pip install "conan==1.59.0" --use-pep517
+      - name: Build dependencies
+        run: |
+          conan create thirdparty/cyclonedds/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+          conan create thirdparty/cyclonedds-cxx/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+          conan create thirdparty/dev_essential/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+          conan create thirdparty/fep3_participant/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+      - name: Build own package
+        run: |
+            conan install . -pr build_profiles/${{ matrix.profile}} -if build
+            conan build . -if build -bf build
+      - name: Upload Test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results
+          path: |
+            build/package
+# TODO:
+#conan create thirdparty/fep3_system/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+# conan create thirdparty/fep3_base_utilities/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+# conan create thirdparty/fep3_sdk/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}

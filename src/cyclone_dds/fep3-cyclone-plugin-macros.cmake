@@ -10,7 +10,7 @@ macro(fep_cyclone_dds_plugin_install NAME DESTINATION)
      # overwrite fep_components file
     install(
         FILES
-            $<TARGET_FILE_DIR:fep3_cyclone_dds_plugin>/fep3_participant.fep_components
+            $<TARGET_FILE_DIR:fep3_cyclone_dds_plugin>/../fep3_participant.fep_components
         DESTINATION ${DESTINATION}
     )
 endmacro(fep_cyclone_dds_install DESTINATION)
