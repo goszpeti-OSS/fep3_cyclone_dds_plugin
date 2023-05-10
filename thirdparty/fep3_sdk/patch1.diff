@@ -1,0 +1,15 @@
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1355b6c..3eafb97 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -63,6 +63,7 @@ if(CONAN_COMPILER)
+ 
+     set(DOXYGEN_ROOT ${CONAN_DOXYGEN_ROOT})
+ endif()
++add_compile_definitions(DEV_ESSENTIAL_DISABLE_MAKE_RESULT_CHECK_RESERVED_ZERO)
+ 
+ include(scripts/cmake/enable_multicore_compilation.cmake)
+ include(scripts/cmake/use_integrated_debug_symbols.cmake)

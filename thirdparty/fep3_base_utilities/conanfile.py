@@ -1,10 +1,9 @@
 from pathlib import Path
 from conans import ConanFile, CMake
 from conan.tools.files import patch
-import os
 
 class ConanProduct(ConanFile):
-    name = "fep_sdk_participant"
+    name = "fep_sdk_base_utilities"
     version = "3.1.0"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake", "txt"
@@ -18,7 +17,7 @@ class ConanProduct(ConanFile):
     no_copy_export_sources = True
     scm = {
         "type": "git",
-        "url": "https://github.com/cariad-tech/fep3_participant.git",
+        "url": "https://github.com/cariad-tech/fep3_base_utilities.git",
         "revision": "v3.1.0"
     }
     
@@ -33,7 +32,7 @@ class ConanProduct(ConanFile):
         return 
 
     def requirements(self):
-        self.requires("dev_essential/1.2.0")
+        self.requires("fep_sdk_system/3.1.0")
         self.requires("boost/1.73.0")
 
     def build(self):
@@ -42,10 +41,10 @@ class ConanProduct(ConanFile):
 
         cmake = CMake(self)
         cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
-        cmake.configure(defs={"fep3_participant_cmake_enable_documentation": "OFF", 
-                              "fep3_participant_cmake_enable_tests": "OFF",
-                              "fep3_participant_cmake_enable_functional_tests": "OFF",
-                              "fep3_participant_cmake_enable_private_tests": "OFF",
+        cmake.configure(defs={"fep_base_utilities_cmake_enable_documentation": "OFF", 
+                              "fep_base_utilities_cmake_enable_tests": "OFF",
+                              "fep_base_utilities_cmake_enable_functional_tests": "OFF",
+                              "fep_base_utilities_cmake_enable_private_tests": "OFF",
                               "Boost_USE_STATIC_LIBS": "On",
                              }
                         )

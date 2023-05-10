@@ -1,0 +1,15 @@
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 64b6328..d962f3c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -66,6 +66,7 @@ if(CONAN_COMPILER)
+         conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
+     endif()
+ endif()
++add_compile_definitions(DEV_ESSENTIAL_DISABLE_MAKE_RESULT_CHECK_RESERVED_ZERO)
+ 
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ 

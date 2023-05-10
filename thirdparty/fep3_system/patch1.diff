@@ -1,0 +1,15 @@
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 207f4a4..8abc0a6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -75,6 +75,7 @@ if(CONAN_COMPILER)
+ 
+     set(DOXYGEN_ROOT ${CONAN_DOXYGEN_ROOT})
+ endif()
++add_compile_definitions(DEV_ESSENTIAL_DISABLE_MAKE_RESULT_CHECK_RESERVED_ZERO)
+ 
+ option(fep3_system_cmake_enable_documentation
+        "If enabled, generate the source code documentation -\
