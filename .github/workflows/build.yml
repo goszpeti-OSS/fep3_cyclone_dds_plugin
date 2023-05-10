@@ -27,7 +27,7 @@ jobs:
           #   os: ubuntu-20.04
           #   profile: gcc-X
           - name: "windows"
-            os: windows-latest
+            os: windows-2019
             profile: win_142
         
     env:
