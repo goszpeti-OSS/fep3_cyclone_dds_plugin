@@ -47,7 +47,7 @@ macro(cyclone_install DESTINATION)
     else()
         set(CYCLONEDDS-CXX_FILES_PATH ${CONAN_LIB_DIRS_CYCLONEDDS-CXX})
         set(CYCLONEDDS_FILES_PATH ${CONAN_LIB_DIRS_CYCLONEDDS})
-        set(FILE_WILDCARD "*.so")
+        set(FILE_WILDCARD "*.so.*")
     endif()
 
     install(DIRECTORY ${CYCLONEDDS-CXX_FILES_PATH}/ DESTINATION ${DESTINATION}
@@ -85,14 +85,14 @@ macro(cyclone_deploy NAME TARGET_FOLDER)
                 ${CYCLONEDDS_FILES_PATH}/ddsc$<$<CONFIG:Debug>:d>.dll
                 ${TARGET_FOLDER})
     else()
-    add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CYCLONEDDS-CXX_FILES_PATH}/${FILE_WILDCARD}
-            ${TARGET_FOLDER})
-    add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CYCLONEDDS_FILES_PATH}/${FILE_WILDCARD}
-            ${TARGET_FOLDER})
+        add_custom_command(TARGET ${NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${CYCLONEDDS-CXX_FILES_PATH}/${FILE_WILDCARD}
+                ${TARGET_FOLDER})
+        add_custom_command(TARGET ${NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${CYCLONEDDS_FILES_PATH}/${FILE_WILDCARD}
+                ${TARGET_FOLDER})
     endif()
 
     add_custom_command(TARGET ${NAME} POST_BUILD
