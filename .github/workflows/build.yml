@@ -52,13 +52,13 @@ jobs:
         run: |
             conan install . -pr build_profiles/${{ matrix.profile}} -if build
             conan build . -if build -bf build
-      - name: Upload Test results
+      # TODO: build the rest of fep
+      # conan create thirdparty/fep3_system/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+      # conan create thirdparty/fep3_base_utilities/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+      # conan create thirdparty/fep3_sdk/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
+      - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
-          name: Test results
+          name: fep3_cyclone_dds_plugin_${{matrix.profile}}
           path: |
             build/package
-# TODO:
-#conan create thirdparty/fep3_system/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
-# conan create thirdparty/fep3_base_utilities/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}
-# conan create thirdparty/fep3_sdk/conanfile.py /_@_ -pr build_profiles/${{ matrix.profile}}

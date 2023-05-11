@@ -41,6 +41,7 @@ a modified fep_components file.
 ## Building the project
 
 The project is set up with Conan using the available public packages and building the missing ones with custom conan files in the thirdparty directory.
+For linux please use an appropriate profile, like the supplied linux_gcc_9
 
     conan create thirdparty/cyclonedds/conanfile.py /_@_ -pr build_profiles/win_142
     conan create thirdparty/cyclonedds-cxx/conanfile.py /_@_ -pr build_profiles/win_142
