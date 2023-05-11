@@ -23,9 +23,9 @@ jobs:
             "windows",
           ]
         include:
-          # - name: "ubuntu"
-          #   os: ubuntu-20.04
-          #   profile: gcc_9
+          - name: "ubuntu"
+            os: ubuntu-20.04
+            profile: gcc_9
           - name: "windows"
             os: windows-2019
             profile: win_142
