@@ -61,7 +61,7 @@ if (UNIX)
     set(CMAKE_SKIP_BUILD_RPATH  OFF)
 endif(UNIX)
 
-install(FILES README.md
+install(FILES Readme.md
         DESTINATION .
 )
 install(FILES LICENSE
