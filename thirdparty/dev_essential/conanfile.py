@@ -14,7 +14,8 @@ class ConanProduct(ConanFile):
     }
 
     def build_requirements(self):
-        self.tool_requires("cmake/3.25.0")
+        if self.settings.arch != "armv8":
+            self.tool_requires("cmake/3.25.0")
 
     def build(self):
         cmake = CMake(self)

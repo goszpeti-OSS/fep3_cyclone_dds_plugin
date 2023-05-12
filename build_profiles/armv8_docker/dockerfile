@@ -1,0 +1,28 @@
+# docker build  . -t fep3cycloneddsplugin:latest -f ./build_profiles/armv8_docker/dockerfile
+# sudo apt-get install qemu binfmt-support qemu-user-static # Install the qemu packages
+#docker run --rm --privileged multiarch/qemu-user-static --reset -p yes # This step will execute the registering scripts
+#sudo docker run  -i --platform linux/arm64:20.03  --rm -t arm64v8/ubuntu:20.04  /bin/bash
+FROM --platform=linux/arm64 arm64v8/ubuntu:20.04 AS base
+
+ENV DISPLAY=:99.0
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update --allow-releaseinfo-change
+RUN apt install git g++-9 python3 python3-pip -y
+RUN pip3 install "conan==1.59.0" --use-pep517
+RUN conan install cmake/3.25.0@_/_ --build=missing -s compiler=gcc -s compiler.version=9 -s compiler.libcxx=libstdc++11
+
+
+COPY ./ ./fep3_cyclone_dds_plugin
+WORKDIR /fep3_cyclone_dds_plugin
+RUN conan create ./thirdparty/dev_essential/conanfile.py /_@_ -pr ./build_profiles/linux_armv8_gcc9 --build-missing
+RUN conan create ./thirdparty/cyclonedds/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create thirdparty/cyclonedds-cxx/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create thirdparty/fep3_participant/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create thirdparty/fep3_system/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create thirdparty/fep3_base_utilities/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create thirdparty/fep3_sdk/conanfile.py /_@_ -pr build_profiles/linux_armv8_gcc9
+# RUN conan create . -pr build_profiles/linux_armv8_gcc9
+
+# RUN apt full-upgrade
+# 

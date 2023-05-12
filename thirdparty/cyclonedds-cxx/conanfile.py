@@ -27,7 +27,9 @@ class ConanProduct(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.definitions["CMAKE_BUILD_TYPE"] = str(self.settings.build_type).upper()
-        cmake.configure(defs={"BUILD_IDLLIB": "ON", "BUILD_EXAMPLES": "ON"})
+        cmake.configure(defs={"BUILD_IDLLIB": "ON",
+                               "BUILD_EXAMPLES": "ON",
+                               "ENABLE_SHM": "NO" #TODO
+                               })
         cmake.build()
         cmake.install()

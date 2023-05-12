@@ -28,6 +28,15 @@ This is not set per default, so there is no differentiation between small and la
 A *fep3_participant.fep_components* file is provided in the lib folder, so you only need to copy it and the *cyclone_dds'* folder beside your 
 fep3_particpant shared library and you're ready to go!
 
+## Multicast issues and QoS
+
+To configure QoS use the environment variable **CYCLONEDDS_URI** and set it to the qos file like this:
+
+set CYCLONEDDS_URI=file://C:/Users/myself/USER_QOS_PROFILES.xml
+
+If you don't receive samples on another pc, probably multicast is not working poperly.
+You can try out unicast by looking using and configuring *scripts/USER_QOS_PROFILE_UNICAST.xml*. Don't forget to enter your ip addresses!
+
 ### Developing participants - CMake macros
 
 There are analogous macros to FEP3 deploy and install:
@@ -66,5 +75,3 @@ Only first level dependencies are listed.
 
 * Visual Studio MSVC 142
 * gcc 9
-
-

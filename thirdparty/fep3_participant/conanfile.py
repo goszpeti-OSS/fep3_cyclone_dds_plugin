@@ -25,7 +25,8 @@ class ConanProduct(ConanFile):
         return super().configure()
 
     def build_requirements(self):
-        self.tool_requires("cmake/3.25.0")
+        if self.settings.arch != "armv8":
+            self.tool_requires("cmake/3.25.0")
 
     def source(self):
         super().source()
@@ -33,7 +34,7 @@ class ConanProduct(ConanFile):
 
     def requirements(self):
         self.requires("dev_essential/1.2.0")
-        self.requires("boost/1.73.0")
+        self.requires("boost/1.81.0")
 
     def build(self):
         patch_str = (Path(self.source_folder) / "patch1.diff").read_text()

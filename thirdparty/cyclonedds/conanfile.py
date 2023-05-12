@@ -21,10 +21,8 @@ class ConanProduct(ConanFile):
         return super().configure()
 
     def build_requirements(self):
-        self.tool_requires("cmake/3.25.0")
-
-    def source(self):
-        return super().source()
+        if self.settings.arch != "armv8":
+            self.tool_requires("cmake/3.25.0")
 
     def requirements(self):
         self.requires("cunit/2.1-3")

@@ -385,8 +385,7 @@ fep3::Result CycloneDDSSimulationBus::initialize()
     _simulation_bus_configuration.updatePropertyVariables();
     uint32_t domain_id = _simulation_bus_configuration._participant_domain;
     
-    auto participant_qos = _impl->_participant.default_participant_qos(); //.participant_qos("fep3::participant");
-    
+    auto participant_qos = dds::domain::qos::DomainParticipantQos();
     auto participant_name = _impl->_participant_info->getName();
     if (participant_name.empty())
     {
@@ -422,10 +421,11 @@ fep3::Result CycloneDDSSimulationBus::initialize()
             ddsi_config conf{};
             conf.domainTag = strdup(system_name.c_str());
             _impl->_participant = dds::domain::DomainParticipant
-            (domain_id, participant_qos
+            (domain_id);
+            // TODO: if participant_qos is set, the xml from envvar does not work anymore
+            /* , participant_qos
             , new ParticipantListener(_impl->_bus_info.get()), dds::core::status::StatusMask::all(),
-            // , nullptr, dds::core::status::StatusMask::none(),
-                conf);
+                conf);*/
             _impl->_bus_info->registerParticipant(_impl->_participant);
             //
         }
